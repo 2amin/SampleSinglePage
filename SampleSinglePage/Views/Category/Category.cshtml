@@ -1,0 +1,177 @@
+﻿@model SampleSinglePage.Models.ViewModels.CategoryViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Content/Custom/category.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="~/Scripts/Custom/category.js"></script>
+    <title>Index</title>
+</head>
+<body>
+   
+    <div class="container col-sm-12">
+        <div class="row col-sm-10">
+            @using (Html.BeginForm())
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "form-label col-sm-1" })
+                    &nbsp;
+                    @Html.TextBoxFor(model => model.Title, new { @id = "title", htmlAttributes = new { @class = "form-textbox col-sm-9" } })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "form-label col-sm-1" })
+                    &nbsp;
+                    @Html.TextBoxFor(model => model.Code, new { @id = "code", htmlAttributes = new { @class = "form-textbox col-sm-9" } })
+                </div>
+                <div class="col-sm-1">
+                    <input id="btn-add" type="button" value="Add" />
+                </div>
+                <div class="col-sm-1">
+                    <input id="btn-remove" type="button" value="Remove" />
+                </div>
+                <div class="col-sm-1">
+                    <input id="btn-edit" type="button" value="Edit" />
+                </div>
+            }
+        </div>
+        <br />
+        <div class="row col-sm-12" id="table-div">
+            <table class="table table-hover category-table">
+                <tr>
+                    <th hidden>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Code)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Title)
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var item in Model.GetCategory())
+                {
+            <tr>
+                <td id="id-cell" hidden>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td id="id-cell" hidden>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td id="title-cell">
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    <input id="table-checkbox" type="checkbox" />
+                </td>
+            </tr>
+                }
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    //************** Save ********************
+    $("#btn-add").click(function () {
+
+        ref_CategoryViewModel = {
+
+            Code: $('#code').val(),
+
+            Title: $('#title').val(),
+        };
+        alert("Code" + ref_CategoryViewModel.Code);
+        $.ajax({
+
+            url: "/Category/Create",
+
+            data: JSON.stringify(ref_CategoryViewModel),
+
+            type: "POST",
+
+            contentType: "application/json;charset=utf-8",
+
+            dataType: "json",
+
+            success: function (result) {
+                alert("success");
+
+                location.reload(); //Must be omit.
+
+            },
+
+            error: function (errormessage) {
+
+                alert(errormessage.responseText);
+
+            }
+
+        });
+    })
+    $("#table-checkbox").click(function () {
+
+        alert("hell")
+        alert(this.checked.Code);
+      
+       
+
+        document.getElementById("code").value = ref_CategoryViewModel.Code;
+        document.getElementById("title").value = ref_CategoryViewModel.Title;
+       
+
+    })
+    //************** Refresh ********************
+    $("#btnRefresh").click(function () {
+
+        location.reload();
+    })
+    //***
+    //************** OnRowSelect ******************
+    //$("table tr").click(function () {
+    //    alert(this.rowIndex);
+
+    //});
+
+    //OnRowSelect = function (e) {
+    //var grid = $("#CategoryGrid").data("kendoGrid");
+    //var selectedRow = this.dataItem(this.select());
+    ////alert(selectedRow.Id);
+    ////alert(selectedRow.Id);
+    //var categoryModel = {};
+    //$("#code").val(selectedRow.Code);
+    //$("#name").val(selectedRow.Name);
+    //categoryModel.Id = selectedRow.Id;
+    //===================================
+
+    ////Reference the Table.
+    //var grid = document.getElementById("categoryGrid");
+    ////Reference the CheckBoxes in Table.
+    //var selectedCheckBox = grid.getElementsByTagName("INPUT").rowNumber;
+    ////Fill up textboxes with record fields values
+    //var selectedRow = selectedCheckBox.parentNode.parentNode;
+    //var id = selectedRow.cells[1].innerHTML;
+    //$("#code").val(selectedRow.cells[2].innerHTML);
+    //$("#title").val(selectedRow.cells[2].innerHTML);
+    var table = document.getElementById("categoryGrid"), rIndex;
+    for (var i = 0; i < table.rows.length; i++) {
+        table.rows[i].onclick = function () {
+            rIndex = this.rowIndex;
+            console.log("Index of table :" + rIndex)
+            var id = this.cells[0].innerHTML;
+            $("#code").val(this.cells[1].innerHTML);
+            $("#title").val(this.cells[2].innerHTML);
+        }
+    }
+           
+</script>
+
+</body>
+</html>
